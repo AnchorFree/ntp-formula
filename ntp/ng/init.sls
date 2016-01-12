@@ -17,6 +17,8 @@ ntpd_conf:
     - template: jinja
     - context:
       config: {{ ntp.settings.ntp_conf }}
+    - watch_in:
+      - service: {{ ntp.lookup.service }}
     {% if 'package' in ntp.lookup %}
     - require:
       - pkg: ntp
@@ -28,6 +30,9 @@ ntpd:
   service.{{ service.get(ntp.settings.ntpd) }}:
     - name: {{ ntp.lookup.service }}
     - enable: {{ ntp.settings.ntpd }}
+    {% if 'provider' in ntp.lookup %}
+    - provider: {{ ntp.lookup.provider }}
+    {% endif %}
     {% if 'package' in ntp.lookup %}
     - require:
       - pkg: ntp
